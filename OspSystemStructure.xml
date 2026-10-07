@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  environment -> hull -> kalman_filter -> dp_controller -> thrust_allocation -> thruster_dynamics -> hull
+  Each VariableConnection goes from an output (first) to an input (second).
+  This file holds only the wiring and the step size. All values are in config.py.
+-->
+<OspSystemStructure xmlns="http://opensimulationplatform.com/MSMI/OSPSystemStructure" version="0.1">
+    <StartTime>0.0</StartTime>
+    <BaseStepSize>0.1</BaseStepSize>
+    <Algorithm>fixedStep</Algorithm>
+
+    <Simulators>
+        <Simulator name="environment" source="fmus/Environment.fmu"/>
+        <Simulator name="hull" source="fmus/Hull.fmu"/>
+        <Simulator name="kalman_filter" source="fmus/KalmanFilter.fmu"/>
+        <Simulator name="dp_controller" source="fmus/DPController.fmu"/>
+        <Simulator name="thrust_allocation" source="fmus/ThrustAllocation.fmu"/>
+        <Simulator name="thruster_dynamics" source="fmus/ThrusterDynamics.fmu"/>
+    </Simulators>
+
+    <Connections>
+        <!-- environment -> hull -->
+        <VariableConnection>
+            <Variable simulator="environment" name="tau_env_x"/>
+            <Variable simulator="hull" name="tau_env_x"/>
+        </VariableConnection>
+        <VariableConnection>
+            <Variable simulator="environment" name="tau_env_y"/>
+            <Variable simulator="hull" name="tau_env_y"/>
+        </VariableConnection>
+        <VariableConnection>
+            <Variable simulator="environment" name="tau_env_n"/>
+            <Variable simulator="hull" name="tau_env_n"/>
+        </VariableConnection>
+
+        <!-- hull -> kalman_filter (measured position) -->
+        <VariableConnection>
+            <Variable simulator="hull" name="north"/>
+            <Variable simulator="kalman_filter" name="north_meas"/>
+        </VariableConnection>
+        <VariableConnection>
+            <Variable simulator="hull" name="east"/>
+            <Variable simulator="kalman_filter" name="east_meas"/>
+        </VariableConnection>
+        <VariableConnection>
+            <Variable simulator="hull" name="psi"/>
+            <Variable simulator="kalman_filter" name="psi_meas"/>
+        </VariableConnection>
+
+        <!-- thruster_dynamics -> kalman_filter (applied thrust, for the prediction step) -->
+        <VariableConnection>
+            <Variable simulator="thruster_dynamics" name="tau_thr_x"/>
+            <Variable simulator="kalman_filter" name="tau_thr_x"/>
+        </VariableConnection>
+        <VariableConnection>
+            <Variable simulator="thruster_dynamics" name="tau_thr_y"/>
+            <Variable simulator="kalman_filter" name="tau_thr_y"/>
+        </VariableConnection>
+        <VariableConnection>
+            <Variable simulator="thruster_dynamics" name="tau_thr_n"/>
+            <Variable simulator="kalman_filter" name="tau_thr_n"/>
+        </VariableConnection>
+
+        <!-- kalman_filter -> dp_controller -->
+        <VariableConnection>
+            <Variable simulator="kalman_filter" name="north_hat"/>
+            <Variable simulator="dp_controller" name="north_hat"/>
+        </VariableConnection>
+        <VariableConnection>
+            <Variable simulator="kalman_filter" name="east_hat"/>
+            <Variable simulator="dp_controller" name="east_hat"/>
+        </VariableConnection>
+        <VariableConnection>
+            <Variable simulator="kalman_filter" name="psi_hat"/>
+            <Variable simulator="dp_controller" name="psi_hat"/>
+        </VariableConnection>
+        <VariableConnection>
+            <Variable simulator="kalman_filter" name="u_hat"/>
+            <Variable simulator="dp_controller" name="u_hat"/>
+        </VariableConnection>
+        <VariableConnection>
+            <Variable simulator="kalman_filter" name="v_hat"/>
+            <Variable simulator="dp_controller" name="v_hat"/>
+        </VariableConnection>
+        <VariableConnection>
+            <Variable simulator="kalman_filter" name="r_hat"/>
+            <Variable simulator="dp_controller" name="r_hat"/>
+        </VariableConnection>
+
+        <!-- dp_controller -> thrust_allocation -->
+        <VariableConnection>
+            <Variable simulator="dp_controller" name="tau_cmd_x"/>
+            <Variable simulator="thrust_allocation" name="tau_cmd_x"/>
+        </VariableConnection>
+        <VariableConnection>
+            <Variable simulator="dp_controller" name="tau_cmd_y"/>
+            <Variable simulator="thrust_allocation" name="tau_cmd_y"/>
+        </VariableConnection>
+        <VariableConnection>
+            <Variable simulator="dp_controller" name="tau_cmd_n"/>
+            <Variable simulator="thrust_allocation" name="tau_cmd_n"/>
+        </VariableConnection>
+
+        <!-- thrust_allocation -> thruster_dynamics -->
+        <VariableConnection>
+            <Variable simulator="thrust_allocation" name="tau_alloc_x"/>
+            <Variable simulator="thruster_dynamics" name="tau_alloc_x"/>
+        </VariableConnection>
+        <VariableConnection>
+            <Variable simulator="thrust_allocation" name="tau_alloc_y"/>
+            <Variable simulator="thruster_dynamics" name="tau_alloc_y"/>
+        </VariableConnection>
+        <VariableConnection>
+            <Variable simulator="thrust_allocation" name="tau_alloc_n"/>
+            <Variable simulator="thruster_dynamics" name="tau_alloc_n"/>
+        </VariableConnection>
+
+        <!-- thruster_dynamics -> hull (closes the loop) -->
+        <VariableConnection>
+            <Variable simulator="thruster_dynamics" name="tau_thr_x"/>
+            <Variable simulator="hull" name="tau_thr_x"/>
+        </VariableConnection>
+        <VariableConnection>
+            <Variable simulator="thruster_dynamics" name="tau_thr_y"/>
+            <Variable simulator="hull" name="tau_thr_y"/>
+        </VariableConnection>
+        <VariableConnection>
+            <Variable simulator="thruster_dynamics" name="tau_thr_n"/>
+            <Variable simulator="hull" name="tau_thr_n"/>
+        </VariableConnection>
+    </Connections>
+</OspSystemStructure>

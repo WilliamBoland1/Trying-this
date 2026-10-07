@@ -1,0 +1,9 @@
+# Pinned so everyone runs the same setup. numpy and matplotlib match
+# ThrusterAllocation_FMU / Prosjektoppgave_Collab.
+pythonfmu==0.7.0     # builds the FMUs (FMI 2.0 co-simulation) from Python classes
+libcosimpy==0.0.6    # OSP's co-simulation engine, runs OspSystemStructure.xml
+numpy==2.1.0
+pandas==2.2.3        # reads the CSV logs
+matplotlib==3.9.2    # plots the trace
+#
+# Install:  .\.venv\Scripts\python.exe -m pip install -r requirements.txt
