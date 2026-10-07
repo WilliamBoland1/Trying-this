@@ -19,7 +19,7 @@ py -3.11 -m venv .venv
 .\.venv\Scripts\python.exe run_simulation.py   # creates results/, ends with "All 24 signals OK"
 ```
 
-`fmus/` and `results/` are not in git. The two scripts above create them.
+`fmus/` and `results/` are empty in git. The two scripts above fill them.
 
 ## Files
 
